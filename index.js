@@ -1,5 +1,5 @@
 const express = require("express");
-const port = 4000;
+const port = 5000;
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const app = express();
@@ -48,24 +48,79 @@ app.post("/new", async (req, res) => {
 
 app.get("/read", async (req, res) => {
   try {
-      const products = await Product.find();
+    const products = await Product.find();
 
-      res.status(200).json({
-          success: true,
-          products // Sending retrieved products in the response
-      });
+    res.status(200).json({
+      success: true,
+      products, // Sending retrieved products in the response
+    });
   } catch (error) {
-      res.status(500).json({
-          success: false,
-          message: error.message
-      });
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
 
+// api for update the data
 
+app.put("/:id", async (req, res) => {
+  try {
+    let product = await Product.findById(req.params.id);
 
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
 
+    product = await Product.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      useFindAndModify: true, // Corrected option name
+      runValidators: true,
+    });
 
-app.listen(port, () => { // <-- Use 'port' variable instead of hardcoding port number
+    res.status(200).json({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+// Delete api
+
+app.delete("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    await Product.deleteOne({ _id: req.params.id });
+
+    res.status(200).json({
+      success: true,
+      message: "Product is deleted from the database",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+app.listen(5000, () => {
+  // <-- Use 'port' variable instead of hardcoding port number
   console.log(`server is running bro ${port}`);
 });

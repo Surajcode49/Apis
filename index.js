@@ -44,8 +44,23 @@ app.post("/new", async (req, res) => {
   }
 });
 
-//
+// create a api for the read the data
 
+app.get("/read", async (req, res) => {
+  try {
+      const products = await Product.find();
+
+      res.status(200).json({
+          success: true,
+          products // Sending retrieved products in the response
+      });
+  } catch (error) {
+      res.status(500).json({
+          success: false,
+          message: error.message
+      });
+  }
+});
 
 
 

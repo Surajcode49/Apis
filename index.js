@@ -44,6 +44,13 @@ app.post("/new", async (req, res) => {
   }
 });
 
+//
+
+
+
+
+
+
 app.listen(port, () => { // <-- Use 'port' variable instead of hardcoding port number
   console.log(`server is running bro ${port}`);
 });
